@@ -1,30 +1,106 @@
-# project
+用vue做一个简单的网站；
+具体流程；
 
-> A Vue.js project
+用cli新建一个项目；
+1、安装vue-cli至全局
 
-## Build Setup
+   npm install -g vue-cli
 
-``` bash
-# install dependencies
-npm install
+2、使用vue-cli初始化项目：
 
-# serve with hot reload at localhost:8080
-npm run dev
+    vue init webpack demo   
 
-# build for production with minification
-npm run build
+3.安装依赖：
 
-# build for production and view the bundle analyzer report
-npm run build --report
+  npm install
 
-# run unit tests
-npm run unit
+4.运行项目：
 
-# run e2e tests
-npm run e2e
+  npm run dev
 
-# run all tests
-npm test
-```
+在src下面的操作：
+新建common文件夹
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+common/css/common.css 存放公共样式
+新建conponents文件夹
+
+新建header.vue 组件
+新建footer.vue 组件
+新建pages文件夹
+
+存放新建的各种页面；
+index.vue
+在main.js 里面的配置；
+
+    // The Vue build version to load with the `import` command
+// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+import Vue from 'vue'
+import App from './App'
+import router from './router'
+import index from './pages/index'
+import ElementUI from 'element-ui'
+import axios from 'axios'
+
+Vue.config.productionTip = false
+Vue.use(ElementUI)
+
+// axios.defaults.baseURL ='https://a.kissneck.com.cn/bbyl/public/v1/';
+Vue.prototype.$axios = axios;
+
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  router,
+  components: { App },
+  template: '<App/>',
+  render: h => h(index)
+})
+
+注：render: h => h(index)可以定义入口页面
+在router/index.js里面的配置；
+
+import Vue from 'vue'
+import Router from 'vue-router'
+import HelloWorld from '@/components/HelloWorld'
+import index from '@/pages/index'
+
+import '@/common/css/common.css'
+import '@/common/css/index.css'
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+    { path: '/', name: 'HelloWorld', component: HelloWorld },
+    { path: '/index', name: 'index', component: index }
+  ]
+})
+
+在页面script里面引入组件；index.vue页面；
+
+import header from '@/components/header.vue'
+import footer from '@/components/footer.vue'
+
+export default {
+name: 'contact-us',
+data() {
+return {
+  list: []
+}
+},
+mounted: function() {
+var that = this;
+that.getData();
+ },
+methods: {
+getData() {
+  var that = this;
+  that.$axios.get('https://api.it120.cc/fashion/banner/list').then(response => {
+    console.log(response.data.data)
+    that.list = response.data.data;
+  }).catch((error) => {
+
+  })
+},
+  },
+ components: { 'v-header': header, 'v-footer': footer }
+}
